@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <title>Animal Buttons</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+</head>
+
+<body>
+  <div class="container">
+
+    <div class="row" id="buttonsRow">
+      <div class="col-lg-12">
+        <div id="buttons-view"></div>
+      </div>
+    </div>
+    
+    <div class="row" id="animals">
+
+      <div class="col-lg-9" id="gifs-appear-here">
+        <div id="innerContainer">
+
+        </div>
+      </div>
+
+      <div class="col-lg-3" id="animalCol">
+        <div id="animal-view"></div>
+            <label for="animal-input" id="addAnimal">Add an animal</label><br>
+            <input type="text" id="animal-input"><br>
+            <input id="add-animal" type="Submit" value="Submit">
+          </div>
+      </div>
+    </div>
+        
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript">
+      //************************
+      //Initial array of animals
+      //************************
+      var topics = ["dog","cat","rabbit","hamster","skunk","goldfish","bird","ferret","turtle","sugar Glider","chinchilla","hedgehog",
+      "hermit crab","gerbill","pygmy goat","chicken","capybara","teacup pig","serval","salamander","frog"];
+      
+      function displayAnimalInfo() {
+          var animal = $(this).attr("data-name");
+          var queryURL = "https://api.giphy.com/v1/gifs/search?q=" + animal + "&api_key=dc6zaTOxFJmzC&limit=10";
+         // $("#gifs-appear-here").empty();
+          $("#innerContainer").empty();
+          //*******************************************************************
+          // Creating an AJAX call for the specific animal button being clicked
+          //*******************************************************************
+          $.ajax({
+              url: queryURL,
+              method: "GET"
+              })
+              .done(function(response) {
+                var results = response.data;
+                for (var i = 0; i < results.length; i++) {
+                  //*************************************
+                  // Creating a div with the class "item"
+                  //*************************************
+                  var gifDiv = $("<div class='item' style='display:inline'>");
+                  //*******************************
+                  // Store the result item's rating
+                  //*******************************
+                  var rating = results[i].rating;
+                  //*****************************************************
+                  // Create a paragraph tag with the result item's rating
+                  //*****************************************************
+                   var p = $("<p>").text("Rating: " + rating);
+                  //***************************************
+                  // Create img tag with animation features
+                  //***************************************
+                  var temp = results[i].images.fixed_height.url;
+                  var resultStill = temp.substring(0, temp.lastIndexOf('.'));
+                  resultStill = resultStill + "_s.gif";
+                  var dataState = "still";
+                  var dataAnimate = results[i].images.fixed_height.url; 
+                  var className = "gif";
+                  var animalImage = $('<img src="' + resultStill + '" data-still ="' + resultStill + '" data-animate="' + dataAnimate + '" data-state="' + dataState + '" class="' + className + '">');
+                  //**************************************************************************
+                  // Appending the p and animalImage we created to the "gifDiv" div we created
+                  //**************************************************************************
+                  gifDiv.append(animalImage);
+                  gifDiv.append(p);
+                  $("#innerContainer").append(gifDiv);
+                }
+              });
+      };
+
+      //******************************************************
+      // Function for creating buttons for all animal in array
+      //******************************************************
+      function renderButtons() {
+        //***********************************************************
+        //Delete the animal buttons prior to adding new animal button
+        //***********************************************************
+        $("#buttons-view").empty();
+        //*************************************
+        // Looping through the array of animals
+        //*************************************
+        for (var i = 0; i < topics.length; i++) {
+          //***************************
+          //Dynamicaly create a button
+          //*************************** 
+          var a = $("<button>");
+          //***********************************
+          //Add a class of animal to the button
+          //***********************************
+          a.addClass("animal");
+          //********************
+          //Add a data-attribute
+          //********************
+          a.attr("data-name", topics[i]);
+          //***************
+          //Set button text
+          //***************
+          a.text(topics[i]);
+          //**************************************
+          //Add the button to the buttons-view div
+          //**************************************
+          $("#buttons-view").append(a);
+        }
+      }
+      //********************************
+      //Function for Submit button click
+      //********************************
+      $("#add-animal").on("click", function(event) {
+        event.preventDefault();
+        //**********************
+        //Get input form textbox
+        //**********************
+        var animal = $("#animal-input").val().trim();
+        //*******************************************
+        //Add animal from the textbox to animal array
+        //*******************************************
+        topics.push(animal);
+        //***********************************************************************
+        // Calling renderButtons which handles the processing of the animal array
+        //***********************************************************************
+        renderButtons();
+      });
+      //**********************
+      //Function for gif click
+      //**********************
+      $(document).on("click", ".gif", function(event) {
+         console.log("pauseStart this: " + this)
+         //**********************************************************************************************
+         // The attr jQuery method allows us to get or set the value of any attribute on our HTML element
+         //**********************************************************************************************
+         var state = $(this).attr("data-state");
+         console.log("state: " + state);
+         //***************************************************************************************************
+         // If the clicked image's state is still, update its src attribute to what its data-animate value is.
+         // Then, set the image's data-state to animate slse set src to the data-still value
+         //***************************************************************************************************
+         if (state === "still") {
+           $(this).attr("src", $(this).attr("data-animate"));
+           $(this).attr("data-state", "animate");
+         } else {
+           $(this).attr("src", $(this).attr("data-still"));
+           $(this).attr("data-state", "still");
+         } 
+      });
+      //*******************************************************************
+      //Add a click event listener to all elements with a class of "animal"
+      //*******************************************************************
+      $(document).on("click", ".animal", displayAnimalInfo);
+      //*************************************************************
+      //Call the renderButtons function to display the intial buttons
+      //*************************************************************
+      renderButtons();
+    </script>
+  </div>
+</body>
+</html>

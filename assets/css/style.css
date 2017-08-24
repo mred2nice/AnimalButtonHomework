@@ -1,0 +1,47 @@
+ button {
+      margin-right: 5px;
+      border-radius: 5px;
+      font-size: 18px;
+      background-color: #009999;
+      color: white;
+    }
+
+ #buttonsRow {
+ 	padding-top: 10px;
+ 	margin-left -10px;
+ }
+
+ #animal-view {
+ 	padding-top: 10px;
+ 	padding-left: 100px;
+ }
+
+ #add-animal {
+ 	border-radius: 5px;
+ 	font-size: 18px;
+ 	background-color: #009999;
+    color: white;
+ }
+
+ #animal-input {
+ 	width: 200px;
+ }
+
+ #animalCol {
+ 	padding-left: 25px;
+ }
+
+ #addAnimal {
+ 	font-style: bold;
+ }
+
+ #gifs-appear-here {
+ 	padding-top: 25px;
+ }
+
+ .item {
+ 	padding-left:10px;
+ 	margin-top:10px;
+ 	float:left;
+ }
+
